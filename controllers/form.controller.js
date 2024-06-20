@@ -11,7 +11,7 @@ const submitForm = async (req, res) => {
         } = req.body;
         const files = req.files;
 
-        if (!name || !dob || !residentialAddress || !sameAsResidential || !permanentAddress) {
+        if (!name || !dob || !residentialAddress || !sameAsResidential ) {
             return res.status(400).json({
                 success: false,
                 message: "Please enter all the required fields"
