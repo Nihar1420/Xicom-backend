@@ -7,6 +7,9 @@ const FormSchema = new mongoose.Schema({
     dob: {
         type: Date,
     },
+    email: {
+        type: String,
+    },
     residentialAddress: {
         type: String,
     },
