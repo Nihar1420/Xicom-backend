@@ -9,10 +9,14 @@ const submitForm = async (req, res) => {
             residentialAddress,
             sameAsResidential,
             permanentAddress,
+            documentsfileName0,
+            documentsfileName1,
+            documentsfileType0,
+            documentsfileType1
         } = req.body;
         const files = req.files;
 
-        if (!name || !dob || !residentialAddress || !sameAsResidential || !email ) {
+        if (!name || !dob || !residentialAddress || !sameAsResidential || !email) {
             return res.status(400).json({
                 success: false,
                 message: "Please enter all the required fields"
@@ -41,9 +45,15 @@ const submitForm = async (req, res) => {
             });
         }
 
-        const documents = files?.map((file) => ({
-            fileName: file.originalname,
-            fileType: file.mimetype,
+        const fileNames = [documentsfileName0, documentsfileName1];
+        const fileTypes = [
+            documentsfileType0 === "application/pdf" ? "pdf" : "image",
+            documentsfileType1 === "application/pdf" ? "pdf" : "image"
+        ];
+
+        const documents = files.map((file, index) => ({
+            fileName: fileNames[index % fileNames.length],
+            fileType: fileTypes[index % fileTypes.length],
             filePath: file.path,
         }));
 
