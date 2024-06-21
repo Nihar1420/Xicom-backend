@@ -9,10 +9,8 @@ const submitForm = async (req, res) => {
             residentialAddress,
             sameAsResidential,
             permanentAddress,
-            documentsfileName0,
-            documentsfileName1,
-            documentsfileType0,
-            documentsfileType1
+            documentsfileName,
+            documentsfileType,
         } = req.body;
         const files = req.files;
 
@@ -45,31 +43,28 @@ const submitForm = async (req, res) => {
             });
         }
 
-        const fileNames = [documentsfileName0, documentsfileName1];
-        const fileTypes = [
-            documentsfileType0 === "application/pdf" ? "pdf" : "image",
-            documentsfileType1 === "application/pdf" ? "pdf" : "image"
-        ];
-
         const documents = files.map((file, index) => ({
-            fileName: fileNames[index % fileNames.length],
-            fileType: fileTypes[index % fileTypes.length],
+            fileName: documentsfileName[index],
+            fileType: documentsfileType[index],
             filePath: file.path,
         }));
 
-        const newForm = new Form({
+        const isSameAsResidential = (sameAsResidential === 'true' || sameAsResidential === true);
+        const modifiedPermanentAddress = isSameAsResidential ? residentialAddress : permanentAddress;
+
+        const submittedForm = await Form.create({
             name,
             dob,
             email,
             residentialAddress,
-            permanentAddress: sameAsResidential ? "" : permanentAddress,
+            permanentAddress: modifiedPermanentAddress,
             documents,
         });
-        await newForm.save();
 
         return res.status(200).json({
             success: true,
-            message: "Form submitted successfully"
+            message: "Form submitted successfully",
+            values: submittedForm
         });
     } catch (error) {
         return res.status(400).json({
